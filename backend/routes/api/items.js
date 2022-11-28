@@ -6,6 +6,13 @@ var User = mongoose.model("User");
 var auth = require("../auth");
 const { sendEvent } = require("../../lib/event");
 
+//Openai api key
+import {Configuration, OpenAIApi} from "openai"
+const configuration = new Configuration({
+  apikey: process.env.OPENAI_API_KEY
+})
+const openai = new OpenAIApi(configuration)
+
 // Preload item objects on routes with ':item'
 router.param("item", function(req, res, next, slug) {
   Item.findOne({ slug: slug })
@@ -142,6 +149,15 @@ router.post("/", auth.required, function(req, res, next) {
     .then(function(user) {
       if (!user) {
         return res.sendStatus(401);
+      }
+      //Genearying image when missing images
+      if( typeof req.body.item.image == undefined){
+          const imageGenerated = openai.createCompletion({
+            prompt: req.body.item.title,
+            n: 1,
+            size: "256*256"
+          });
+          req.body.item.image = imageGenerated
       }
 
       var item = new Item(req.body.item);
