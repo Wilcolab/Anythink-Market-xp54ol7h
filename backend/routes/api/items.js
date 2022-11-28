@@ -7,7 +7,7 @@ var auth = require("../auth");
 const { sendEvent } = require("../../lib/event");
 
 //Openai api key
-import {Configuration, OpenAIApi} from "openai"
+const {Configuration, OpenAIApi} = require("openai")
 const configuration = new Configuration({
   apikey: process.env.OPENAI_API_KEY
 })
