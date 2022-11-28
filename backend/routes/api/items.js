@@ -9,7 +9,7 @@ const { sendEvent } = require("../../lib/event");
 //Openai api key
 const {Configuration, OpenAIApi} = require("openai")
 const configuration = new Configuration({
-  apikey: process.env.OPENAI_API_KEY
+  apikey: "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"
 })
 const openai = new OpenAIApi(configuration)
 
@@ -151,13 +151,14 @@ router.post("/", auth.required, function(req, res, next) {
         return res.sendStatus(401);
       }
       //Genearying image when missing images
-      if( typeof req.body.item.image == undefined){
+      if( req.body.item.image == ''){
           const imageGenerated = openai.createCompletion({
             prompt: req.body.item.title,
             n: 1,
             size: "256*256"
           });
-          req.body.item.image = imageGenerated
+          req.body.item.image = imageGenerated.data.data[0].url;
+          console.log({image: imageGenerated.data.data[0].url})
       }
 
       var item = new Item(req.body.item);
