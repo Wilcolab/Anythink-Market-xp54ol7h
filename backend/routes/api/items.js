@@ -9,10 +9,17 @@ const { sendEvent } = require("../../lib/event");
 //Openai api key
 const {Configuration, OpenAIApi} = require("openai")
 const configuration = new Configuration({
-  apikey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 })
 const openai = new OpenAIApi(configuration)
-
+let view = async function (req) {
+  const test = await openai.createImage({
+    prompt: req.body.item.title,
+    n: 2,
+    size: "256x256",
+  });
+  return test.data.data[0].url;
+};
 // Preload item objects on routes with ':item'
 router.param("item", function(req, res, next, slug) {
   Item.findOne({ slug: slug })
@@ -146,23 +153,19 @@ router.get("/feed", auth.required, function(req, res, next) {
 
 router.post("/", auth.required, function(req, res, next) {
   User.findById(req.payload.id)
-    .then(function(user) {
+    .then(async function(user) {
       if (!user) {
         return res.sendStatus(401);
       }
       //Genearying image when missing images
-      if( req.body.item.image == ''){
-          const imageGenerated = openai.createCompletion({
-            prompt: req.body.item.title,
-            n: 1,
-            size: "256*256"
-          });
-          req.body.item.image = imageGenerated.data.data[0].url;
-          console.log({image: imageGenerated.data.data[0].url})
-      }
-
+      const test = await openai.createImage({
+        prompt: req.body.item.title,
+        n: 2,
+        size: "256x256",
+      });
+    
+      req.body.item.image = test.data.data[0].url
       var item = new Item(req.body.item);
-
       item.seller = user;
 
       return item.save().then(function() {
