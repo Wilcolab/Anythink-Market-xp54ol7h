@@ -7,4 +7,4 @@ COPY .wilco ./.wilco
 # Pre-install npm packages
 WORKDIR /usr/src/backend
 RUN yarn install
-
+RUN docker exec -it anythink-backend-node bash
