@@ -26,7 +26,7 @@ const CommentInput = (props) => {
       }).then((payload) => {
         props.onSubmit(payload);
       });
-      this.setState({ body: "" });
+      this.setState({  body: "" });
     };
   // }
 
