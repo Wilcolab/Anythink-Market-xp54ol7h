@@ -19,17 +19,29 @@ const CommentInput = (props) => {
   //     this.setState({ body: ev.target.value });
   //   };
 
+    // const createComment = async (ev) => {
+    //   ev.preventDefault();
+    //   agent.Comments.create(props.slug, {
+    //     body: this.state.body,
+    //   }).then((payload) => {
+    //     props.onSubmit(payload);
+    //   });
+    //   this.setState({  body: "" });
+    // };
+  // }
+
+    const setInputBody = (ev) => {
+      setBody({body: ev.target.value})
+    }
     const createComment = async (ev) => {
       ev.preventDefault();
       agent.Comments.create(props.slug, {
-        body: this.state.body,
+        body: body
       }).then((payload) => {
         props.onSubmit(payload);
       });
-      this.setState({  body: "" });
-    };
-  // }
-
+      setBody('')
+    }
     return (
       <form className="card comment-form m-2" onSubmit={createComment}>
         <div className="card-block">
@@ -37,7 +49,7 @@ const CommentInput = (props) => {
             className="form-control"
             placeholder="Write a comment..."
             value={body}
-            onChange={(ev) => setBody(ev.target.value)}
+            onChange={setInputBody}
             rows="3"
           ></textarea>
         </div>
